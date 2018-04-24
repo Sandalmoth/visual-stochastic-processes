@@ -1,0 +1,9 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- snakemake=4.4.0
+- gxx_linux-64=7.2.0
+- tclap=1.2.1
+- cmake=3.10.3
+- make=4.2.1
