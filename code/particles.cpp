@@ -42,12 +42,13 @@ size_t name_to_number(string s) {
 }
 
 
+// TODO memory usage is terrible like this, due to excessive string replication
+// but at the moment, regex does not support string_view, and I don't want to create a workaround
 shared_ptr<Node> parse_tree(string s, double time) {
   cout << endl;
   static regex re_parens(R"([\(\)])");
-  static regex re_leaf(R"(([A-Z]):(\d+\.?\d*))");
-  // static regex re_branch(R"((\(.*\))([A-Z]):(\d+\.?\d*))");
-  static regex re_branch(R"(\((.+),(.+)\)([A-Z]):(\d+\.?\d*))");
+  static regex re_leaf(R"(([A-Z]):(\d+\.?\d*e?-?\d*))");
+  static regex re_branch(R"(\((.*)\)([A-Z]):(\d+\.?\d*e?-?\d*))");
   cout << s << endl;
   // check if we have a leaf (recursion end condition)
   smatch m;
@@ -63,13 +64,37 @@ shared_ptr<Node> parse_tree(string s, double time) {
 
   // otherwise, recursively parse further branches
   cout << "not leaf" << endl;
+  cout << s.size() << endl;
   regex_match(s, m, re_branch);
+  cout << "match done" << endl;
   cout << m[1] << '\t' << m[2] << '\t' << m[3] << '\t' << m[4] << endl;
-  double dt = stod(m[4]);
-  cout << dt << endl;
-  auto branch = make_shared<Node>(name_to_number(m[3]), time + dt);
-  branch->left = parse_tree(string(m[1]), time + dt);
-  branch->right = parse_tree(string(m[2]), time + dt);
+  double dt = stod(m[3]);
+  auto branch = make_shared<Node>(name_to_number(m[2]), time + dt);
+  string ss(m[1]);
+  cout << ss << endl;
+  // now split by central comma
+  int n_paren = 0;
+  size_t i = 0;
+  while (i < ss.size()) {
+    if (ss[i] == ',' && n_paren == 0)
+      break;
+    else if (ss[i] == '(')
+      ++n_paren;
+    else if (ss[i] == ')')
+      --n_paren;
+    i++;
+  }
+  string left(ss, 0, i);
+  string right(ss, i + 1, ss.size() - i);
+  // remove outermost parenthesis if present
+  // if (left[0] == '(' && left[left.size() - 1] == ')')
+  //   left = string(left, 1, left.size() - 2);
+  // if (right[0] == '(' && right[right.size() - 1] == ')')
+  //   right = string(right, 1, right.size() - 2);
+  // unneccessary
+  cout << left << '\t' << right << endl;
+  branch->left = parse_tree(left, time + dt);
+  branch->right = parse_tree(right, time + dt);
   return branch;
 }
 
