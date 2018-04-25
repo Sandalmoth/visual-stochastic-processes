@@ -180,7 +180,7 @@ Vector lj_force(Point a, Point b) {
   // cout << a << '\t' << b << endl;
   double r2 = (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y);
   if (r2 <= 0.0)
-    return Vector {0.0, 0.0};
+    return Vector {0.01, 0.01}; // prevent particles sticking together if they land exactly on top (unlikely)
   // cout << "dist " << r2 << endl;
   double r6 = pow(r2, 3.0);
   double f =  epsilon4 * 6.0 * sigma6 * (r6 - 2.0 * sigma6) / (r6 * r6 * sqrt(r2));
