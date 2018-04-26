@@ -147,8 +147,8 @@ ostream &operator<<(ostream &out, Vector p) {
 }
 
 // Parameters for the Lennard-Jones potential
-constexpr double sigma = 1.0;
-constexpr double epsilon4 = 2.0 * 4.0;
+constexpr double sigma = 0.2;
+constexpr double epsilon4 = 20.0 * 4.0;
 constexpr double sigma6 = pow(sigma, 6.0);
 
 // Potential between a and b
@@ -239,10 +239,10 @@ int main(int argc, char **argv) {
     TCLAP::ValueArg<string> a_forest("f", "forest", "Forest of cell growth", false, "n/a", "; separated trees", cmd);
     TCLAP::ValueArg<string> a_forestfile("i", "forestfile", "Forest of cell growth", false, "n/a", "; separated trees", cmd);
     TCLAP::ValueArg<double> a_end_time("t", "endtime", "Max time to run physics", false, 10.0, "double", cmd);
-    TCLAP::ValueArg<double> a_timestep("d", "timestep", "Physics timestep", false, 0.01, "double", cmd);
+    TCLAP::ValueArg<double> a_timestep("d", "timestep", "Physics timestep", false, 0.005, "double", cmd);
     TCLAP::ValueArg<double> a_friction("r", "friction", "Particle friction multiplier", false, 0.95, "double", cmd);
-    TCLAP::ValueArg<double> a_max_velocity("v", "max-velocity", "Max particle velocity", false, 0.05, "double", cmd);
-    TCLAP::ValueArg<double> a_max_acceleration("a", "max-acceleration", "Max particle acceleration", false, 0.01, "double", cmd);
+    TCLAP::ValueArg<double> a_max_velocity("v", "max-velocity", "Max particle velocity", false, 3.0, "double", cmd);
+    TCLAP::ValueArg<double> a_max_acceleration("a", "max-acceleration", "Max particle acceleration", false, 1.5, "double", cmd);
 
     cmd.parse(argc, argv);
 
@@ -279,6 +279,7 @@ int main(int argc, char **argv) {
   // cout << endl;
   // cout << "Resulting trees:" << endl;
   // for (auto t: forest) cout << t << endl;
+  // exit(0);
 
 
   // Set up starting particles
@@ -368,7 +369,7 @@ int main(int argc, char **argv) {
     for (size_t i = 0; i < points.size(); ++i) {
       Point p = points[i];
       if (p.cell->birthtime > time)
-        break; // your time has note come yet young one
+        continue; // your time has note come yet young one
 
       if (p.cell->left == nullptr && p.cell->right == nullptr) {
         // cout << "killing" << endl;
@@ -382,8 +383,8 @@ int main(int argc, char **argv) {
         // cout << p.cell->left << endl;
         // cout << p.cell->right << endl;
         double angle = random_angle(rng);
-        double x_offset = cos(angle) * sigma * 0.005;
-        double y_offset = sin(angle) * sigma * 0.005;
+        double x_offset = cos(angle) * sigma * 0.00005;
+        double y_offset = sin(angle) * sigma * 0.00005;
         // cout << p << ' ' << x_offset << ' ' << y_offset << endl;
         points.push_back(Point{p.x + x_offset, p.y + y_offset, p.cell->left});
         // cout << points.back() << endl;

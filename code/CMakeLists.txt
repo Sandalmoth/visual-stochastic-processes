@@ -7,9 +7,13 @@ target_include_directories(particles PRIVATE "${CMAKE_ROOT}/../../include")
 target_include_directories(metaballs PRIVATE "${CMAKE_ROOT}/../../include")
 target_include_directories(points PRIVATE "${CMAKE_ROOT}/../../include")
 
+# target_link_libraries(points "${CMAKE_ROOT}/../../lib/libSDL2.a")
+
 find_package (SDL2)
 if (SDL2_FOUND)
   include_directories(${SDL2_INCLUDE_DIRS})
+  message(${SDL2_INCLUDE_DIRS})
+  message(${SDL2_LIBRARIES})
   target_link_libraries (points ${SDL2_LIBRARIES} -lSDL2)
 endif (SDL2_FOUND)
 
