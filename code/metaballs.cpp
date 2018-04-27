@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -86,11 +87,34 @@ struct Arguments {
 
 
 double field(double r) {
-  double f = 1.0 - r;
+  double f = (0.01 - r) * 100.0;
   f = max(f, 0.0);
   return f;
 }
-
+double field2(double r) {
+  double f = (0.01 - r*r) * 100.0;
+  f = max(f, 0.0);
+  return f;
+}
+double efield(double r) {
+  return max(0.0, exp(-r * 1000.0));
+}
+double cfield(double r) {
+  if (r < 0.0001) {
+    return 1.0 - r;
+  } else {
+    return 0.0;
+    // return max(0.0, 1.0 - (r-0.0001)*2000);
+  }
+  // return (r < 0.0002 ? 1.0 : 0.0);
+}
+double tfield(double r) {
+  if (r < 0.0001) {
+    return 1.0;
+  } else {
+    return max(0.0, 1.0 - (r-0.0001)*30.0);
+  }
+}
 double distance2(const Point &a, const Point &b) {
   return (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y);
 }
@@ -148,6 +172,7 @@ int main(int argc, char **argv) {
       for (int x = 0; x < a.width; ++x) {
         // double *f = new double[max_type + 1];
         vector<double> f(max_type + 1, 0.0);
+        vector<double> f2(max_type + 1, 0.0);
         Point here{
               min_x + static_cast<double>(x) / static_cast<double>(a.width) * xw
             , min_y + static_cast<double>(y) / static_cast<double>(a.height) * yw
@@ -155,19 +180,51 @@ int main(int argc, char **argv) {
             };
         // cout << here.x << ' ' << here.y << endl;
         for (auto &p: frames[i].points) {
-          f[p.type] += field(distance2(here, p));
+          f[p.type] += cfield(distance2(here, p));
+          f2[p.type] += tfield(distance(here, p));
         }
         double total_f = accumulate(f.begin(), f.end(), 0.0);
-        cout << x << ' ' << y << ' ' << total_f << endl;
-        cout << y*a.width + x << endl;
-        buffer[(y*a.width + x)*4] = total_f * numeric_limits<uint8_t>::max();
+        double total_f2 = accumulate(f2.begin(), f2.end(), 0.0);
+        // cout << x << ' ' << y << ' ' << total_f << endl;
+        // cout << y*a.width + x << endl;
+        if (total_f > 0.5) {
+          auto main_type = max_element(f.begin(), f.end()) - f.begin();
+          switch (main_type) {
+          case 0:
+              buffer[(y*a.width + x)*4] = numeric_limits<uint8_t>::max();
+              buffer[(y*a.width + x)*4 + 1] = 0;
+              buffer[(y*a.width + x)*4 + 2] = 0;
+              buffer[(y*a.width + x)*4 + 3] = 0;
+            break;
+          case 1:
+              buffer[(y*a.width + x)*4] = 0;
+              buffer[(y*a.width + x)*4 + 1] = numeric_limits<uint8_t>::max();
+              buffer[(y*a.width + x)*4 + 2] = 0;
+              buffer[(y*a.width + x)*4 + 3] = 0;
+          }
+        } else if (total_f2 > 0.5) {
+          buffer[(y*a.width + x)*4] = numeric_limits<uint8_t>::max() / 8;
+          buffer[(y*a.width + x)*4 + 1] = numeric_limits<uint8_t>::max() / 8;
+          buffer[(y*a.width + x)*4 + 2] = numeric_limits<uint8_t>::max() / 8;
+          buffer[(y*a.width + x)*4 + 3] = 0;
+        } else {
+          buffer[(y*a.width + x)*4] = 0;
+          buffer[(y*a.width + x)*4 + 1] = 0;
+          buffer[(y*a.width + x)*4 + 2] = 0;
+          buffer[(y*a.width + x)*4 + 3] = 0;
+        }
+        // if (total_f > 0.5)
+        //   buffer[(y*a.width + x)*4] = numeric_limits<uint8_t>::max();
+        // else
+        //   buffer[(y*a.width + x)*4] = 0;
+        // buffer[(y*a.width + x)*4] = total_f * numeric_limits<uint8_t>::max();
         // buffer[x*a.height + y] = total_f * numeric_limits<uint8_t>::max();
         // delete f;
       }
     }
 
     GifWriteFrame(&gif, buffer.data(), a.width, a.height, a.delay);
-    cout << "frame done" << endl;
+    // cout << "frame done" << endl;
     // SDL_RenderDrawPoint(renderer, (point.x - min_x) / xw * WIDTH, (point.y - min_y) / yw * HEIGHT);
   }
 

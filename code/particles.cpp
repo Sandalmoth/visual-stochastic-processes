@@ -147,8 +147,8 @@ ostream &operator<<(ostream &out, Vector p) {
 }
 
 // Parameters for the Lennard-Jones potential
-constexpr double sigma = 0.2;
-constexpr double epsilon4 = 20.0 * 4.0;
+constexpr double sigma = 0.03;
+constexpr double epsilon4 = 50.0 * 4.0;
 constexpr double sigma6 = pow(sigma, 6.0);
 
 // Potential between a and b
@@ -240,9 +240,9 @@ int main(int argc, char **argv) {
     TCLAP::ValueArg<string> a_forestfile("i", "forestfile", "Forest of cell growth", false, "n/a", "; separated trees", cmd);
     TCLAP::ValueArg<double> a_end_time("t", "endtime", "Max time to run physics", false, 10.0, "double", cmd);
     TCLAP::ValueArg<double> a_timestep("d", "timestep", "Physics timestep", false, 0.005, "double", cmd);
-    TCLAP::ValueArg<double> a_friction("r", "friction", "Particle friction multiplier", false, 0.95, "double", cmd);
-    TCLAP::ValueArg<double> a_max_velocity("v", "max-velocity", "Max particle velocity", false, 3.0, "double", cmd);
-    TCLAP::ValueArg<double> a_max_acceleration("a", "max-acceleration", "Max particle acceleration", false, 1.5, "double", cmd);
+    TCLAP::ValueArg<double> a_friction("r", "friction", "Particle friction multiplier", false, 0.8, "double", cmd);
+    TCLAP::ValueArg<double> a_max_velocity("v", "max-velocity", "Max particle velocity", false, 6.0, "double", cmd);
+    TCLAP::ValueArg<double> a_max_acceleration("a", "max-acceleration", "Max particle acceleration", false, 3.5, "double", cmd);
 
     cmd.parse(argc, argv);
 
