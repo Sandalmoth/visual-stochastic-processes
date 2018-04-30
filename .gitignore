@@ -7,3 +7,4 @@ results
 .snakemake
 notebooks/.ipynb_checkpoints
 code/__pycache__
+code/gif.h
