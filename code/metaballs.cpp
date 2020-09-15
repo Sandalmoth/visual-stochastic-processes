@@ -191,26 +191,26 @@ int main(int argc, char **argv) {
           auto main_type = max_element(f.begin(), f.end()) - f.begin();
           switch (main_type) {
           case 0:
-              buffer[(y*a.width + x)*4] = numeric_limits<uint8_t>::max();
-              buffer[(y*a.width + x)*4 + 1] = 0;
-              buffer[(y*a.width + x)*4 + 2] = 0;
-              buffer[(y*a.width + x)*4 + 3] = 0;
+            buffer[(y*a.width + x)*4] = numeric_limits<uint8_t>::max() / 3;
+            buffer[(y*a.width + x)*4 + 1] = 0;
+            buffer[(y*a.width + x)*4 + 2] = numeric_limits<uint8_t>::max();
+            buffer[(y*a.width + x)*4 + 3] = 0;
             break;
           case 1:
-              buffer[(y*a.width + x)*4] = 0;
-              buffer[(y*a.width + x)*4 + 1] = numeric_limits<uint8_t>::max();
-              buffer[(y*a.width + x)*4 + 2] = 0;
-              buffer[(y*a.width + x)*4 + 3] = 0;
+            buffer[(y*a.width + x)*4] = numeric_limits<uint8_t>::max();
+            buffer[(y*a.width + x)*4 + 1] = numeric_limits<uint8_t>::max() / 2;
+            buffer[(y*a.width + x)*4 + 2] = 0;
+            buffer[(y*a.width + x)*4 + 3] = 0;
           }
         } else if (total_f2 > 0.5) {
-          buffer[(y*a.width + x)*4] = numeric_limits<uint8_t>::max() / 8;
-          buffer[(y*a.width + x)*4 + 1] = numeric_limits<uint8_t>::max() / 8;
-          buffer[(y*a.width + x)*4 + 2] = numeric_limits<uint8_t>::max() / 8;
+          buffer[(y*a.width + x)*4] = numeric_limits<uint8_t>::max() / 2;
+          buffer[(y*a.width + x)*4 + 1] = numeric_limits<uint8_t>::max() / 2;
+          buffer[(y*a.width + x)*4 + 2] = numeric_limits<uint8_t>::max() / 2;
           buffer[(y*a.width + x)*4 + 3] = 0;
         } else {
-          buffer[(y*a.width + x)*4] = 0;
-          buffer[(y*a.width + x)*4 + 1] = 0;
-          buffer[(y*a.width + x)*4 + 2] = 0;
+          buffer[(y*a.width + x)*4] = numeric_limits<uint8_t>::max();
+          buffer[(y*a.width + x)*4 + 1] = numeric_limits<uint8_t>::max();
+          buffer[(y*a.width + x)*4 + 2] = numeric_limits<uint8_t>::max();
           buffer[(y*a.width + x)*4 + 3] = 0;
         }
         // if (total_f > 0.5)

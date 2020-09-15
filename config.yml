@@ -1,10 +1,10 @@
 # Stochastic simulation
 death_rate: "0.1 0.1"
-birth_rate: "1.0 1.0"
+birth_rate: "1.0 1.5"
 death_interaction: "0.001 0.001"
 birth_interaction: "0.0 0.0"
-mutation_rate: 1e-3
-end_time: 10
+mutation_rate: 1e-4
+end_time: 50
 starting_population: "1 0"
 
 # Particle model
@@ -16,6 +16,6 @@ timestep: 0.005
 
 # Animation
 frame_skip: 99
-frame_delay: 17
-width: 640
-height: 480
+frame_delay: 33
+width: 1920
+height: 1080
